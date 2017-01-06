@@ -4,3 +4,4 @@ credentials/admin_public_keys
 credentials/user_private_keys
 credentials/user_public_keys
 credentials/configs
+.DS_Store

@@ -2,5 +2,8 @@
 name: private-aws-ansible
 dependencies:
 - python=3
+- passlib
 - pip:
   - ansible
+  - Crypto
+  
