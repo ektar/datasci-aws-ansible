@@ -5,6 +5,7 @@
     - debug:
         msg: "System {{ inventory_hostname }}"
   roles:
+    - first-config-aws
     - add-users
   vars_files:
     - "vars/ansible_config.yml"

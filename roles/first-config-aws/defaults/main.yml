@@ -1,0 +1,19 @@
+ubuntu_common_required_packages:
+  - unattended-upgrades
+  - git
+  - screen
+  - links
+  - curl
+
+ubuntu_common_optional_packages:
+  - mosh       # Allows quicker access from poor connections
+  - vim
+  - python     # Required for ansible
+  - python-pip # Required to install ansible dependencies
+  - python-dev # One of the dependencies requires this...
+  - lvm2
+  - ntp
+  - awscli
+
+python_pip_packages:
+  - boto

@@ -1,0 +1,41 @@
+---
+- name: Update APT package cache
+  apt: update_cache=yes cache_valid_time=3600
+
+# Takes a long time - commented out during development
+#- name: Upgrade APT to the latest packages
+#  apt: upgrade=safe
+
+- name: Install required packages
+  apt: state=installed pkg={{ item }}
+  with_items: "{{ ubuntu_common_required_packages }}"
+
+- name: Install optional packages
+  apt: state=installed pkg={{ item }}
+  with_items: "{{ ubuntu_common_optional_packages }}"
+
+# Disable auto-updating, something seems to break ansible
+#- name: Adjust APT update intervals
+#  copy: src=apt_periodic dest=/etc/apt/apt.conf.d/10periodic
+
+- name: Disallow password authentication
+  lineinfile: dest=/etc/ssh/sshd_config
+              regexp="^PasswordAuthentication"
+              line="PasswordAuthentication no"
+              state=present
+  notify: Restart ssh
+
+- name: Ensure that us_EN.UTF-8 locale is present (used by postgres, among others)
+  locale_gen:
+    name: en_US.UTF-8
+    state: present
+    
+- name: upgrade pip
+  pip: 
+    name: 'pip'
+    state: latest
+
+- name: installing python packages
+  pip: name={{ item }} state=present
+  with_items: "{{ python_pip_packages }}"
+  tags: install
