@@ -6,3 +6,4 @@ credentials/user_public_keys
 credentials/configs
 .DS_Store
 *.retry
+old_roles
