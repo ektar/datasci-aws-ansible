@@ -12,3 +12,4 @@ tag_ansible_role_control
 
 [control:vars]
 create_user_home=True
+docker_users=["ecarlson"]
