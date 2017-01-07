@@ -1,0 +1,14 @@
+---
+# Need to define dynamic groups so that we can refer to them later
+[tag_ansible_role_control]
+[tag_ansible_role_jupyterhub]
+
+# Define static groups for consistency with other configurations
+[jupyterhub:children]
+tag_ansible_role_jupyterhub
+
+[control:children]
+tag_ansible_role_control
+
+#[control:vars]
+#ansible_ssh_private_key_file=../credentials/admin_private_keys/acs-cdsint-admin.key

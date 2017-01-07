@@ -1,0 +1,273 @@
+---
+# # Perform control node installation
+- hosts: control
+  tasks:
+    - debug:
+        msg: "System {{ inventory_hostname }}  "
+
+# # Perform control node installation
+# - hosts: control
+#   roles:
+#     - first-config-aws
+#     - { role: add-users, user_home: /mnt/homes_acs}
+#     - ansible-ec2-admin
+#     - nfs-server
+#     - controlnode
+#     - gitlab
+#     - ansible-role-samba
+#     - ansible-consul
+#     - register-consul-services
+#     - provision-new-nodes
+#   vars_files:
+#     - "../configs/ansible_config.yml"
+#     - "../credentials/configs/users_cfg_crypt.yml"
+#     - "../credentials/configs/smb_cfg.yml"
+#   vars:
+#     - nfs_shares:
+#       - {mount_pt: /mnt/homes_acs, ip_mask: 10.0.1.0/24, nfs_opts: "rw,sync,no_root_squash,no_subtree_check"}
+#       - {mount_pt: /mnt/data_acs_dept, ip_mask: 10.0.1.0/24, nfs_opts: "rw,sync,no_root_squash"}
+#       - {mount_pt: /mnt/data_panda_proj, ip_mask: 10.0.1.0/24, nfs_opts: "rw,sync,no_root_squash"}
+#     - sudo_users:
+#       - ecarlson
+#     - allow_passwordless_sudo: True
+#     - gitlab_git_data_dir: /mnt/data_acs_dept/gitlab/
+#     - gitlab_external_url: "https://{{ ansible_default_ipv4['address'] }}/"
+#     - samba_netbios_name: CONTROL_NODE
+#     - samba_server_string: 'Welcome to the control node server'
+#     - samba_workgroup: PANDA
+#     - samba_load_homes: true
+#     - samba_log: /var/log/samba.log
+#     - samba_log_size: 60000
+#     - samba_map_to_guest: Never
+#     - samba_shares_root: /mnt
+#     - samba_shares:
+#       - name: data_panda_proj
+#         public: yes
+#         comment: 'Panda project data'
+#         write_list: +panda
+#         group: panda
+#         path: /mnt/data_panda_proj
+#       - name: data_acs_dept
+#         public: yes
+#         comment: 'ACS department data'
+#         write_list: +acs_dept
+#         group: acs_dept
+#         path: /mnt/data_acs_dept
+#     - consul_primary_servers: "{{ groups['consul-server'] }}"
+#     - consul_servers: "{{ groups['consul-server'] }}"
+#     - consul_services:
+#       - { service_name: gitlab,
+#           service_port: 80,
+#           service_check: ',
+#       "Check": {
+#         "HTTP": "https://localhost:80/",
+#         "Interval": "10s",
+#         "Notes": "Verify gitlab port is responding"
+#       }  '
+#         }
+
+# # Perform jupyterhub node installation
+# - hosts: jupyterhub
+#   roles:
+#     - first-config-aws
+#     - ansible-consul
+#     - mount-nfs
+#     - { role: add-users, user_home: /mnt/homes_acs }
+#     - jupyterhub
+#     - torque-head
+#     - oracle-java
+#     - yarn-submitter
+#   vars_files:
+#     - "../configs/ansible_config.yml"
+#     - "../credentials/configs/users_cfg_crypt.yml"
+#   vars:
+#     - mount_points:
+#       - {mount_point: /mnt/homes_acs, mount_source: "10.0.1.6:/mnt/homes_acs"}
+#       - {mount_point: /mnt/data_acs_dept, mount_source: "10.0.1.6:/mnt/data_acs_dept"}
+#       - {mount_point: /mnt/data_panda_proj, mount_source: "10.0.1.6:/mnt/data_panda_proj"}
+#     - nfs_opts: rsize=8192,wsize=8192,timeo=14,intr,soft
+#     - no_config_users_ssh: true
+#     - sudo_users:
+#       - ecarlson
+#     - allow_passwordless_sudo: True
+#     - pbs_master_name: "{{ groups['jupyterhub'][0] }}"
+#     - torque_processor_count: 8
+#     - torque_node_host_prefix: ip-10-0-1
+#     - consul_primary_servers: "{{ groups['consul-server'] }}"
+#     - consul_servers: "{{ groups['consul-server'] }}"
+
+# # Perform jupyterhub node installation
+# - hosts: torque-worker
+#   roles:
+#     - first-config-aws
+#     - mount-nfs
+#     - { role: add-users, user_home: /mnt/homes_acs }
+#     - python
+#     - torque-worker
+#   vars_files:
+#     - "../configs/ansible_config.yml"
+#     - "../credentials/configs/users_cfg_empty.yml"
+#   vars:
+#     - mount_points:
+#       - {mount_point: /mnt/homes_acs, mount_source: "10.0.1.6:/mnt/homes_acs"}
+#       - {mount_point: /mnt/data_acs_dept, mount_source: "10.0.1.6:/mnt/data_acs_dept"}
+#       - {mount_point: /mnt/data_panda_proj, mount_source: "10.0.1.6:/mnt/data_panda_proj"}
+#     - nfs_opts: rsize=8192,wsize=8192,timeo=14,intr,soft
+#     - no_config_users_ssh: true
+#     - sudo_users:
+#       - ecarlson
+#     - allow_passwordless_sudo: True
+#     - pbs_master_name: "{{ groups['jupyterhub'][0] }}"
+
+# - hosts: tag_ansible_role_torque_worker_needs_provision
+#   tasks:
+#     - ec2_tag:
+#         region: '{{ ec2_region }}'
+#         resource: '{{ ec2_id }}'
+#         tags:
+#           ansible-role: torque-worker
+
+# - hosts: rancher-worker, rancher-master
+#   roles:
+#     - first-config-aws
+#     - mount-nfs
+#     - { role: add-users, user_home: /mnt/homes_acs }
+#     - docker
+#   vars_files:
+#     - "../configs/ansible_config.yml"
+#     - "../credentials/configs/users_cfg_empty.yml"
+#   vars:
+#     - mount_points:
+#       - {mount_point: /mnt/homes_acs, mount_source: "10.0.1.6:/mnt/homes_acs"}
+#       - {mount_point: /mnt/data_acs_dept, mount_source: "10.0.1.6:/mnt/data_acs_dept"}
+#       - {mount_point: /mnt/data_panda_proj, mount_source: "10.0.1.6:/mnt/data_panda_proj"}
+#     - nfs_opts: rsize=8192,wsize=8192,timeo=14,intr,soft
+#     - no_config_users_ssh: true
+#     - sudo_users:
+#       - ecarlson
+#     - docker_users:
+#       - ecarlson
+#     - allow_passwordless_sudo: True
+
+# # Perform jupyterhub node installation
+# - hosts: postgres
+#   roles:
+#     - first-config-aws
+#     - postgresql
+#     - ansible-consul
+#     - register-consul-services
+#   vars_files:
+#     - "../configs/ansible_config.yml"
+#   vars:
+#     - ansible_distribution_release: wily  # Have been using vivid on amazon, no vivid release for postgres
+#     - postgresql_data_directory: /mnt/postgres_data/data
+#     - postgresql_authentication:
+#       - type: host
+#         user: all
+#         method: md5
+#         database: 'all'
+#         address: '10.0.1.0/24'
+#     - consul_primary_servers: "{{ groups['consul-server'] }}"
+#     - consul_servers: "{{ groups['consul-server'] }}"
+
+#     - consul_services:
+#         - { service_name: postgres,
+#             service_port: 5432,
+#             service_check: ''
+#           }
+
+# - hosts: hadoop
+#   roles:
+#     - mount-nfs
+#     - { role: add-users, user_home: /mnt/homes_acs }
+#     - python
+#   vars_files:
+#     - "../configs/ansible_config.yml"
+#     - "../credentials/configs/users_cfg_empty.yml"
+#   vars:
+#     - mount_points:
+#       - {mount_point: /mnt/homes_acs, mount_source: "10.0.1.6:/mnt/homes_acs"}
+#       - {mount_point: /mnt/data_acs_dept, mount_source: "10.0.1.6:/mnt/data_acs_dept"}
+#       - {mount_point: /mnt/data_panda_proj, mount_source: "10.0.1.6:/mnt/data_panda_proj"}
+#     - nfs_opts: rsize=8192,wsize=8192,timeo=14,intr,soft
+#     - no_config_users_ssh: true
+
+# - hosts: hadoop-master
+#   roles:
+#     - ansible-consul
+#     - register-consul-services
+#   vars_files:
+#     - "../configs/ansible_config.yml"
+#     - "../credentials/configs/users_cfg_crypt.yml"
+#   vars:
+#     - consul_use_systemd: False
+#     - consul_use_initd: True
+#     - consul_services:
+#       - { service_name: hue,
+#           service_port: 8888,
+#           service_check: ',
+#       "Check": {
+#         "HTTP": "http://localhost:8888/",
+#         "Interval": "10s",
+#         "Notes": "Verify hue port is responding"
+#       }  '
+#         }
+#       - { service_name: hadoop,
+#           service_port: 8088,
+#           service_check: ',
+#       "Check": {
+#         "HTTP": "http://localhost:8088/cluster",
+#         "Interval": "10s",
+#         "Notes": "Verify hadoop ui port is responding"
+#       }  '
+#         }
+#       - { service_name: spark,
+#           service_port: 18080,
+#           service_check: ',
+#       "Check": {
+#         "HTTP": "http://localhost:18080/",
+#         "Interval": "10s",
+#         "Notes": "Verify spark ui port is responding"
+#       }  '
+#         }
+#     - consul_primary_servers: "{{ groups['consul-server'] }}"
+#     - consul_servers: "{{ groups['consul-server'] }}"
+
+# # Perform consul node installation
+# - hosts: consul-server
+#   roles:
+#     - first-config-aws
+#     - ansible-consul
+#   vars_files:
+#     - "../configs/ansible_config.yml"
+#   vars:
+#     - consul_primary_servers: "{{ groups['consul-server'] }}"
+#     - consul_servers: "{{ groups['consul-server'] }}"
+
+
+# # Perform consului node installation
+# - hosts: consul-ui
+#   roles:
+#     - first-config-aws
+#     - ansible-consul
+#     - consul-web-ui
+#   vars_files:
+#     - "../configs/ansible_config.yml"
+#   vars:
+#     - consul_primary_servers: "{{ groups['consul-server'] }}"
+#     - consul_servers: "{{ groups['consul-server'] }}"
+
+
+# # Note: this requires that the ubuntu user on control node has .aws/credentials properly configured
+# - hosts: needs-provision
+#   become: false
+#   tasks:
+#     - name: Set EC2 Tags
+#       ec2_tag:
+#         region: '{{ ec2_region }}'
+#         resource: '{{ ec2_id }}'
+#         tags:
+#           ansible-needs-provision: false
+#       delegate_to: "{{ groups['control'][0] }}"
+#   tags:
+#     - ec2-tag

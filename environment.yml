@@ -1,9 +1,11 @@
 # run: conda env create --file environment.yml
 name: private-aws-ansible
 dependencies:
-- python=3
+- boto
 - passlib
+- python=3
 - pip:
   - ansible
+  - awscli
   - Crypto
   
