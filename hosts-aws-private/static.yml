@@ -10,5 +10,5 @@ tag_ansible_role_jupyterhub
 [control:children]
 tag_ansible_role_control
 
-#[control:vars]
-#ansible_ssh_private_key_file=../credentials/admin_private_keys/acs-cdsint-admin.key
+[control:vars]
+create_user_home=True

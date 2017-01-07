@@ -1,0 +1,87 @@
+- group: name='{{ user_group }}' state=present gid='{{ user_group_id }}'
+
+- name: Create user groups
+  group:
+    name: '{{ item.groupname }}'
+    gid: '{{ item.gid }}'
+    state: present
+  with_items: "{{ user_groups }}"
+
+- name: Create users
+  user:
+    name: '{{ item.username }}'
+    comment: '{{ item.fullname }} ({{ item.email }})'
+    uid: '{{ item.uid }}'
+    group: '{{ user_group }}'
+    groups: '{{ item.groups }}'
+    password: '{{ item["crypt-pass"] }}'
+    home: '{{ user_home }}/{{ item.username }}'
+    shell: '{{ user_shell }}'
+    createhome: '{{ create_user_home }}'
+    state: present
+  with_items: "{{ users }}"
+  when: (user_group_filter is not defined) or (user_group_filter in item.groups)
+
+- name: Create .ssh directories
+  become: yes
+  become_user: '{{ item.username }}'
+  file:
+    path: '{{ user_home }}/{{ item.username }}/.ssh'
+    state: directory
+    mode: 0700
+  with_items: "{{ users }}"
+  when:
+    - no_config_users_ssh is not defined or not no_config_users_ssh
+    - (user_group_filter is not defined) or (user_group_filter in item.groups)
+
+- name: Copy public ssh keys
+  become: yes
+  become_user: '{{ item.username }}'
+  copy:
+    src: '{{ user_credentials_path }}/user_public_keys/{{ item.username }}_key.pub'
+    dest: '{{ user_home }}/{{ item.username }}/.ssh/id_rsa.pub'
+    mode: 0644
+  with_items: "{{ users }}"
+  when:
+    - no_config_users_ssh is not defined or not no_config_users_ssh
+    - (user_group_filter is not defined) or (user_group_filter in item.groups)
+
+- name: Check whether authorized_keys already exists for users
+  become: yes
+  become_user: '{{ item.username }}'
+  shell: >
+    SSH_PATH="{{ user_home }}/{{ item.username }}/.ssh"; if [ ! -f $SSH_PATH/authorized_keys ]; then cp $SSH_PATH/id_rsa.pub $SSH_PATH/authorized_keys; fi
+  with_items: "{{ users }}"
+  when:
+    - no_config_users_ssh is not defined or not no_config_users_ssh
+    - (user_group_filter is not defined) or (user_group_filter in item.groups)
+
+- name: Add sudo users to sudo group
+  user:
+    name: '{{ item }}'
+    groups: 'sudo'
+    append: 'yes'
+  with_items: "{{ sudo_users }}"
+
+- name: Make so sudo user doesn't have to enter password
+  shell: sh -c 'echo "{{ item }} ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/{{ item }}'
+  args:
+    creates: '/etc/sudoers.d/{{ item }}'
+  with_items: "{{ sudo_users }}"
+  when: allow_passwordless_sudo
+
+- name: Create hdfs user directories
+  become_user: hdfs
+  shell: hadoop fs -mkdir /user/{{ item.username }};
+  with_items: "{{ users }}"
+  when:
+    - (user_group_filter is not defined) or (user_group_filter in item.groups)
+    - create_hdfs_users
+
+- name: Set hdfs user directory permissions
+  become_user: hdfs
+  shell: hadoop fs -chown {{ item.username }} /user/{{ item.username }};
+  with_items: "{{ users }}"
+  when:
+    - (user_group_filter is not defined) or (user_group_filter in item.groups)
+    - create_hdfs_users

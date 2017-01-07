@@ -1,0 +1,5 @@
+sudo_users: []
+allow_passwordless_sudo: False
+user_shell: '/bin/bash'
+create_hdfs_users: False
+create_user_home: False

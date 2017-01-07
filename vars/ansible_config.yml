@@ -1,0 +1,30 @@
+user_credentials_path: credentials
+user_group: datasci
+user_group_id: 5000
+user_home: /mnt/efs/home
+allow_passwordless_sudo: True
+
+# squid_allow_access_from_ips:
+#   - 192.168.3.0/16
+# squid_listen_on_port: 3128
+# squid_allow_access_to_ports:
+#   - 80
+#   - 443
+  
+# consul_primary_servers:
+#   - 130.140.52.46
+#   - 130.140.52.49
+#   - 130.140.52.166
+# consul_rest_port: 8500
+# consul_datacenter: datasci
+
+# postgresql_listen_addresses:
+# - '*'
+# postgresql_client_encoding: 'utf8'
+#postgresql_authentication:
+#- type: host
+#  user: all
+#  method: md5
+#  database: 'all'             # defaults to 'samerole', can also be a list
+#  address: '130.140.0.0/16'   # optional
+#

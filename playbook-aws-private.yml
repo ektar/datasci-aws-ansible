@@ -3,7 +3,13 @@
 - hosts: control
   tasks:
     - debug:
-        msg: "System {{ inventory_hostname }}  "
+        msg: "System {{ inventory_hostname }}"
+  roles:
+    - add-users
+  vars_files:
+    - "vars/ansible_config.yml"
+    - "credentials/configs/users_cfg_crypt.yml"
+    - "credentials/configs/group_cfg.yml"
 
 # # Perform control node installation
 # - hosts: control
