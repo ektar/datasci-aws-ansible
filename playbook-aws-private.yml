@@ -8,10 +8,14 @@
     - first-config-aws
     - add-users
     - docker
+    - nfs-server
   vars_files:
     - "vars/ansible_config.yml"
     - "credentials/configs/users_cfg_crypt.yml"
     - "credentials/configs/group_cfg.yml"
+  vars:
+    - nfs_shares:
+      - {mount_pt: /mnt/local, ip_mask: 10.0.1.0/24, nfs_opts: "rw,sync,no_root_squash,no_subtree_check"}  
 
 # # Perform control node installation
 # - hosts: control

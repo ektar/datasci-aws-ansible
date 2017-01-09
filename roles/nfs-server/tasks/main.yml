@@ -1,0 +1,17 @@
+---
+
+- name: Install required packages
+  apt: state=installed pkg={{ item }}
+  with_items: "{{ required_packages }}"
+
+- name: Add to nfs exports configuration file
+  lineinfile: dest=/etc/exports regexp="^{{ item.mount_pt }}" line="{{ item.mount_pt }} {{ item.ip_mask }}({{ item.nfs_opts }})"
+  with_items: "{{ nfs_shares }}"
+
+- name: Restart nfs-kernel-server
+  service:
+    name: 'nfs-kernel-server'
+    state: 'restarted'
+
+- name: Reload NFS exports
+  command: exportfs -ra

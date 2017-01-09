@@ -1,0 +1,4 @@
+nfs_shares: []
+
+required_packages:
+  - nfs-kernel-server
