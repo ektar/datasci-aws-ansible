@@ -1,5 +1,5 @@
 ---
-# # Perform control node installation
+# Perform control node installation
 - hosts: control
   tasks:
     - debug:
@@ -16,6 +16,23 @@
   vars:
     - nfs_shares:
       - {mount_pt: /mnt/local, ip_mask: 10.0.1.0/24, nfs_opts: "rw,sync,no_root_squash,no_subtree_check"}  
+
+# Perform jupyterhub node installation
+- hosts: postgres
+  roles:
+    - first-config-aws
+    - postgresql
+  vars_files:
+    - "vars/ansible_config.yml"
+  vars:
+    - ansible_distribution_release: xenial  # Have been using vivid on amazon, no vivid release for postgres
+    - postgresql_data_directory: /mnt/postgres_data/data
+    - postgresql_authentication:
+      - type: host
+        user: all
+        method: md5
+        database: 'all'
+        address: '10.0.1.0/24'
 
 # # Perform control node installation
 # - hosts: control
