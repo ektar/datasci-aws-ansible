@@ -1,9 +1,16 @@
+# Add user role
 user_credentials_path: credentials
 user_group: datasci
 user_group_id: 5000
 user_home: /mnt/efs/home
 allow_passwordless_sudo: True
 
+# Postgres server role
+postgresql_listen_addresses:
+- '*'
+postgresql_client_encoding: 'utf8'
+
+# Postgres client role
 postgres_client_version: 9.5
 
 # squid_allow_access_from_ips:
