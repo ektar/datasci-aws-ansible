@@ -9,6 +9,7 @@
     - add-users
     - docker
     - nfs-server
+    - postgres-client
   vars_files:
     - "vars/ansible_config.yml"
     - "credentials/configs/users_cfg_crypt.yml"
@@ -21,7 +22,7 @@
 - hosts: postgres
   roles:
     - first-config-aws
-    - postgresql
+    - postgres-server
   vars_files:
     - "vars/ansible_config.yml"
   vars:

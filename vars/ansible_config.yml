@@ -4,6 +4,8 @@ user_group_id: 5000
 user_home: /mnt/efs/home
 allow_passwordless_sudo: True
 
+postgres_client_version: 9.5
+
 # squid_allow_access_from_ips:
 #   - 192.168.3.0/16
 # squid_listen_on_port: 3128

@@ -1,0 +1,5 @@
+postgres_client_version: 9.5
+
+client_packages:
+  - postgresql-client-common
+  - postgresql-client-{{ postgres_client_version }}
