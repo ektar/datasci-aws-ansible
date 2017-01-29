@@ -1,0 +1,20 @@
+---
+- name: java | Accept Oracle license prior JDK installation
+  shell: echo debconf shared/accepted-oracle-license-v1-1 select true | sudo debconf-set-selections; echo debconf shared/accepted-oracle-license-v1-1 seen true | sudo debconf-set-selections
+    creates=/usr/lib/jvm/java-8-oracle
+
+- name: java | Update repositories
+  apt_repository:
+    repo={{ item }}
+    state=present
+    update_cache=yes
+    validate_certs=False  # Need to use if https proxy in use
+  with_items: "{{ java_apt_repos }}"
+
+- name: java | Install dependencies
+  apt:
+    pkg="{{ apt_java_package }}"
+    state=present
+
+- name: copy java environment configuration file
+  copy: src=java_home.sh dest=/etc/profile.d/java_home.sh owner=root mode=755

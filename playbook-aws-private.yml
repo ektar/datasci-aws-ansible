@@ -1,4 +1,10 @@
 ---
+- hosts: all
+  gather_facts: no
+  tasks:
+    - name: Make sure python installed
+      raw: "sudo apt-get update -qq && sudo apt-get install -qq python"
+
 # Perform control node installation
 - hosts: control
   tasks:
@@ -18,8 +24,11 @@
     - nfs_shares:
       - {mount_pt: /mnt/local, ip_mask: 10.0.1.0/24, nfs_opts: "rw,sync,no_root_squash,no_subtree_check"}  
 
-# Perform jupyterhub node installation
+# Perform postgres node installation
 - hosts: postgres
+  tasks:
+    - debug:
+        msg: "System {{ inventory_hostname }}"
   roles:
     - first-config-aws
     - postgres-server
@@ -34,6 +43,43 @@
         method: md5
         database: 'all'
         address: '10.0.1.0/24'
+
+# Perform mysql node installation
+- hosts: mariadb
+  tasks:
+    - debug:
+        msg: "System {{ inventory_hostname }}"
+  roles:
+    - first-config-aws
+    - mariadb-server
+  vars_files:
+    - "vars/ansible_config.yml"
+  vars:
+    - mysql_data_directory: /mnt/mysql_data/data
+
+# Perform jupyterhub node installation
+- hosts: jupyterhub
+  tasks:
+    - debug:
+        msg: "System {{ inventory_hostname }}"
+  roles:
+    - first-config-aws
+    - add-users
+    - docker
+    - postgres-client
+    - mount-nfs
+    # - jupyterhub
+    - oracle-java
+    # - yarn-submitter
+    - vncserver
+    - mariadb-client
+  vars_files:
+    - "vars/ansible_config.yml"
+    - "credentials/configs/users_cfg_crypt.yml"
+    - "credentials/configs/group_cfg.yml"
+  vars:
+    - mount_points:
+      - {mount_point: /mnt/efs, mount_source: "fs-6c3ce725.efs.us-east-1.amazonaws.com:/"}
 
 # # Perform control node installation
 # - hosts: control

@@ -3,6 +3,7 @@
 [tag_ansible_role_control]
 [tag_ansible_role_jupyterhub]
 [tag_ansible_role_postgres]
+[tag_ansible_role_mariadb]
 
 # Define static groups for consistency with other configurations
 [control:children]
@@ -10,11 +11,19 @@ tag_ansible_role_control
 
 [control:vars]
 create_user_home=True
-docker_users=["ecarlson"]
+docker_users="ecarlson"
 
 [jupyterhub:children]
 tag_ansible_role_jupyterhub
 
+[jupyterhub:vars]
+sudo_users="ecarlson"
+docker_users="ecarlson"
+allow_passwordless_sudo=True
+
 [postgres:children]
 tag_ansible_role_postgres
+
+[mariadb:children]
+tag_ansible_role_mariadb
 

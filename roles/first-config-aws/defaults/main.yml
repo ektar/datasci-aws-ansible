@@ -14,6 +14,7 @@ ubuntu_common_optional_packages:
   - lvm2
   - ntp
   - awscli
+  - jq         # json query, often useful
 
 python_pip_packages:
   - boto

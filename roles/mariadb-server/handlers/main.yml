@@ -1,0 +1,4 @@
+---
+
+- name: Start MariaDB
+  service: name=mariadb state=started

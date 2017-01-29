@@ -1,0 +1,16 @@
+---
+- name: Install required packages
+  apt: state=installed pkg={{ item }}
+  with_items:
+    - nfs-common
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+
+- yum: name=$item state=latest
+  with_items:
+    - nfs-common
+  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
+
+- name: Mount drive {{item.mount_source}} to {{item.mount_point}}
+  mount: name="{{item.mount_point}}" src="{{item.mount_source}}"
+         fstype=nfs state=mounted opts="{{nfs_mount_opts}}"
+  with_items: "{{mount_points}}"

@@ -1,0 +1,36 @@
+---
+
+- name: Install software-properties package
+  apt: name=software-properties-common state=present
+
+- name: Ensure that APT works with the https method
+  apt: name={{ item }} state=present
+  with_items:
+    - apt-transport-https
+    - ca-certificates
+
+- name: Install mariadb GPG key
+  apt_key: keyserver=hkp://keyserver.ubuntu.com:80 id=0xF1656F24C74CD1D8 state=present
+  tags:
+    - mariadb-server
+    - gpg_key
+
+- name: Add mariadb apt repository
+  apt_repository: repo="deb http://ftp.utexas.edu/mariadb/repo/{{ mariadb_server_version }}/ubuntu {{ ansible_distribution_release }} main" state=present
+  tags:
+    - mariadb-server
+    - apt_repository
+
+- name: Update apt-cache
+  apt: update_cache=yes
+  tags:
+    - mariadb-server
+    - apt_cache
+
+- name: Install mariadb package
+  apt: name=mariadb-server state=present
+  notify: Start MariaDB
+  tags:
+    - mariadb-server
+    - install
+

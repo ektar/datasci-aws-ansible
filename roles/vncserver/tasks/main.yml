@@ -1,0 +1,8 @@
+---
+
+- name: Update APT package cache
+  apt: update_cache=yes cache_valid_time=3600
+
+- name: Install required packages
+  apt: state=installed pkg={{ item }}
+  with_items: "{{ required_packages }}"

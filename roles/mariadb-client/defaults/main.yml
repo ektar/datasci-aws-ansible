@@ -1,0 +1,4 @@
+mariadb_client_version: 10.0
+
+client_packages:
+  - mariadb-client-core-{{ mariadb_client_version }}
